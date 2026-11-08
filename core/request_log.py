@@ -33,6 +33,9 @@ class JsonlLogger:
 
     def log(self, **fields) -> dict:
         record = {"ts": datetime.now(timezone.utc).isoformat(timespec="milliseconds")}
+        trace_id = fields.pop("trace_id", None)   # server-generated hex: never mask it (its digits
+        if trace_id:                              # can look like a phone number)
+            record["trace_id"] = trace_id
         record.update(_mask(fields))
         with self.path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(record) + "\n")

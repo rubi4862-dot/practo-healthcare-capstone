@@ -5,7 +5,7 @@ $ MOCK_LLM=1 part1_rag.py
 1. Build two ChromaDB collections (upsert)
 ==============================================================================
 Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1575.26it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 3030.82it/s]
 Embedding model : sentence-transformers/all-MiniLM-L6-v2 (local, CPU)
 Fixed-size      : 40 words, overlap 10 words
 Sentence-based  : 2 sentences per chunk

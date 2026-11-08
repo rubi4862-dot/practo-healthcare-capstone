@@ -1,7 +1,7 @@
 $ MOCK_LLM=1 part2_crew.py
 
 Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1800.27it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 3265.16it/s]
 Agent -> tools (from AGENT_TOOL_ALLOWLIST):
   Retrieval Agent  ['rag_search']
   Lookup Agent     ['check_appointment_status']
@@ -25,7 +25,7 @@ KICKOFF: What is the status of APT-1024 and is a follow-up within 7 days free?
 │                                                                             │
 │  Crew Execution Started                                                     │
 │  Name: crew                                                                 │
-│  ID: 5cb0f5ed-37f3-443c-bea2-a0a6a80ba3cc                                   │
+│  ID: 425a006c-7e9b-4d6b-93b9-438d2bbac62e                                   │
 │                                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -36,16 +36,16 @@ KICKOFF: What is the status of APT-1024 and is a follow-up within 7 days free?
 │  Name: Customer question: <<<What is the status of APT-1024 and is a        │
 │  follow-up within 7 days free?>>>                                           │
 │  Retrieve the relevant policy chunks.                                       │
-│  ID: f5b1eb50-1418-4a35-ab5d-cf61b9523eaf                                   │
+│  ID: 85e70726-dcdf-46ee-ae83-00025b884b35                                   │
 │                                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────── 🤖 Agent Started ──────────────────────────────┐
 │                                                                             │
-│  Agent: Retrieval Agent                                                     │
-│Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
-                                                                             │
+│  Agent: Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+Retrieval Agent                                                     │
+│                                                                             │
 │  Task: Customer question: <<<What is the status of APT-1024 and is a        │
 │  follow-up within 7 days free?>>>                                           │
 │  Retrieve the relevant policy chunks.                                       │
@@ -69,11 +69,11 @@ KICKOFF: What is the status of APT-1024 and is a follow-up within 7 days free?
 │  follow-up visit with the same doctor within 7 days of the original         │
 │  consultation is free of charge. A follow-up booked between 8 and 14 days   │
 │  after the original visit gets a 50% discount on the consultation fee.      │
-│  Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
-After 14                                                                   │
+│  After 14                                                                   │
 │  [source=10_follow_up_visit_discount_policy.md score=0.4084] gets a 50%     │
 │  discount on the consultation fee. After 14 days, the full fee applies      │
-│  because the visit is treated as a new consultation. The discount applies   │
+│  because the visit is treated as a new consultation. The discount applies   Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+│
 │  only when the doctor marked follow-up as required on the original          │
 │  appointment.                                                               │
 │  [source=02_cancellation_rescheduling_window.md score=0.3722] the change    │
@@ -143,15 +143,15 @@ After 14                                                                   │
 │  Name: Customer question: <<<What is the status of APT-1024 and is a        │
 │  follow-up within 7 days free?>>>                                           │
 │  Look up the appointment if an ID is given.                                 │
-│  ID: 351b42ac-3966-4c4b-979e-db2753270920                                   │
+│  ID: 28b0e3f2-f7ca-4c82-875b-c8525711362a                                   │
 │                                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────── 🤖 Agent Started ──────────────────────────────┐
 │                                                                             │
-│  Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
-Agent: Lookup Agent                                                        │
+│  Agent: Lookup Agent                                                      Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+  │
 │                                                                             │
 │  Task: Customer question: <<<What is the status of APT-1024 and is a        │
 │  follow-up within 7 days free?>>>                                           │
@@ -164,10 +164,11 @@ Agent: Lookup Agent                                                        │
 │  Tool: check_appointment_status                                             │
 │  Args: {"record_id": "APT-1024"}                                            │
 │                                                                             │
-│                                                                             │
+│Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
-┌─────────────────────Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
- ✅ Tool Execution Completed (#1) ──────────────────────┐
+
+┌───────────────────── ✅ Tool Execution Completed (#1) ──────────────────────┐
 │                                                                             │
 │  Tool Completed                                                             │
 │  Tool: check_appointment_status                                             │
@@ -186,7 +187,6 @@ Agent: Lookup Agent                                                        │
 │  0.947, "escalation_threshold": 0.725, "escalate": true}                    │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
-
 
 
 ┌─────────────────────────── ✅ Agent Final Answer ───────────────────────────┐
@@ -221,15 +221,15 @@ Agent: Lookup Agent                                                        │
 │  Name: Customer question: <<<What is the status of APT-1024 and is a        │
 │  follow-up within 7 days free?>>>                                           │
 │  Compose the final answer.                                                  │
-│  ID: 8bec811f-f4f8-47d0-95de-e86303cdeaa9                                   │
+│  ID: d93528a1-bf19-4322-b58b-df40cd9f752e                                   │
 │                                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────── 🤖 Agent Started ──────────────────────────────┐
 │                                                                             │
-│  Agent: Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
-Composer Agent                                                      │
+│  Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+Agent: Composer Agent                                                      │
 │                                                                             │
 │  Task: Customer question: <<<What is the status of APT-1024 and is a        │
 │  follow-up within 7 days free?>>>                                           │
@@ -273,14 +273,15 @@ Composer Agent                                                      │
 │                                                                             │
 │  Crew Execution Completed                                                   │
 │  Name: crew                                                                 │
-│  ID: 5cb0f5ed-37f3-443c-bea2-a0a6a80ba3cc                                   │
-│  
-Tools invoked during this kickoff:
+│  ID: 425a006c-7e9b-4d6b-93b9-438d2bbac62e                                   │
+│  Final Output: {"answer":"Appointment APT-1024 (Cardiology) is Completed    │
+│  with a consultation fee of INR 1350. The doctor marked a follow-up as    
+Tools invoked during this kickoff:  
   - rag_search({'query': 'What is the status of APT-1024 and is a follow-up within 7 days free?'})
-Final Output: {"answer":"Appointment APT-1024 (Cardiology) is Completed   - check_appointment_status({'record_id': 'APT-1024'})
+  - check_appointment_status({'record_id': 'APT-1024'})│
 
 Validated SupportResponse:
-   │{
+{
   "answer": "Appointment APT-1024 (Cardiology) is Completed with a consultation fee of INR 1350. The doctor marked a follow-up as required. Escalation score 0.947 is at or above the threshold 0.725, so it is escalated to the support team. A follow-up visit with the same doctor within 7 days of the original consultation is free of charge. A follow-up booked between 8 and 14 days after the original visit gets a 50% discount on the consultation fee.",
   "sources": [
     "10_follow_up_visit_discount_policy.md"
@@ -304,11 +305,10 @@ Validated SupportResponse:
   }
 }
 
-
 ==============================================================================
 KICKOFF: How much does a dermatology consultation cost?
 ==============================================================================
-│  with a consultation fee of INR 1350. The doctor marked a follow-up as      │
+
 │  required. Escalation score 0.947 is at or above the threshold 0.725, so    │
 │  it is escalated to the support team. A follow-up visit with the same       │
 │  doctor within 7 days of the original consultation is free of charge. A     │
@@ -339,7 +339,7 @@ KICKOFF: How much does a dermatology consultation cost?
 │                                                                             │
 │  Crew Execution Started                                                     │
 │  Name: crew                                                                 │
-│  ID: 5cb0f5ed-37f3-443c-bea2-a0a6a80ba3cc                                   │
+│  ID: 425a006c-7e9b-4d6b-93b9-438d2bbac62e                                   │
 │                                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -350,14 +350,14 @@ KICKOFF: How much does a dermatology consultation cost?
 │  Name: Customer question: <<<How much does a dermatology consultation       │
 │  cost?>>>                                                                   │
 │  Retrieve the relevant policy chunks.                                       │
-│  ID: f5b1eb50-1418-4a35-ab5d-cf61b9523eaf                                   │
+│  ID: 85e70726-dcdf-46ee-ae83-00025b884b35                                   │
 │                                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────── 🤖 Agent Started ──────────────────────────────┐
-│                                                                             │Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
-
+│                                                                             Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+│
 │  Agent: Retrieval Agent                                                     │
 │                                                                             │
 │  Task: Customer question: <<<How much does a dermatology consultation       │
@@ -379,10 +379,10 @@ KICKOFF: How much does a dermatology consultation cost?
 │  Tool Completed                                                             │
 │  Tool: rag_search                                                           │
 │  Output: [source=03_consultation_fee_structure.md score=0.7031]             │
-│  Consultation fees are set per specialty and are shown before the patient Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
-  │
+│  Consultation fees are set per specialty and are shown before the patient   │
 │  confirms a booking. General Medicine consultations cost between INR 300    │
-│  and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology       │
+│Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+  and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology       │
 │  between INR 500 and INR 1000.                                              │
 │  [source=03_consultation_fee_structure.md score=0.6416] INR 800, and        │
 │  Dermatology between INR 500 and INR 1000. Orthopedics consultations range  │
@@ -452,15 +452,15 @@ KICKOFF: How much does a dermatology consultation cost?
 │  Name: Customer question: <<<How much does a dermatology consultation       │
 │  cost?>>>                                                                   │
 │  Look up the appointment if an ID is given.                                 │
-│  ID: 351b42ac-3966-4c4b-979e-db2753270920                                   │
+│  ID: 28b0e3f2-f7ca-4c82-875b-c8525711362a                                   │
 │                                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────── 🤖 Agent Started ──────────────────────────────┐
-│                                                                             │
-│  Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
-Agent: Lookup Agent                                                        │
+│                                                                             │Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+
+│  Agent: Lookup Agent                                                        │
 │                                                                             │
 │  Task: Customer question: <<<How much does a dermatology consultation       │
 │  cost?>>>                                                                   │
@@ -494,7 +494,7 @@ Agent: Lookup Agent                                                        │
 │  Name: Customer question: <<<How much does a dermatology consultation       │
 │  cost?>>>                                                                   │
 │  Compose the final answer.                                                  │
-│  ID: 8bec811f-f4f8-47d0-95de-e86303cdeaa9                                   │
+│  ID: d93528a1-bf19-4322-b58b-df40cd9f752e                                   │
 │                                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -503,8 +503,8 @@ Agent: Lookup Agent                                                        │
 │                                                                             │
 │  Agent: Composer Agent                                                      │
 │                                                                             │
-│Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
-  Task: Customer question: <<<How much does a dermatology consultation       │
+│  Task: Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+Customer question: <<<How much does a dermatology consultation       │
 │  cost?>>>                                                                   │
 │  Compose the final answer.                                                  │
 │                                                                             │
@@ -540,19 +540,18 @@ Agent: Lookup Agent                                                        │
 │                                                                             │
 │  Crew Execution Completed                                                   │
 │  Name: crew                                                                 │
-│  ID: 5cb0f5ed-37f3-443c-bea2-a0a6a80ba3cc                                   │
+│  ID: 425a006c-7e9b-4d6b-93b9-438d2bbac62e                                   │
 │  Final Output: {"answer":"General Medicine consultations cost between INR   │
 │  300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology   │
 │  between INR 500 and INR 1000. Consultation fees are set per specialty and  │
 │  are shown before the patient confirms a                                    │
 │  booking.","sources":["03_consultation_fee_structure.md"],"grounded":true,  │
-│  "refused":false,"refusal_reason":null,"top1_score":0.7031,"appointment":n  │
-│  
-Tools invoked during this kickoff:ull}
-                                                                       - rag_search({'query': 'How much does a dermatology consultation cost?'})
 
+Tools invoked during this kickoff:│
+  - rag_search({'query': 'How much does a dermatology consultation cost?'})
+  
 Validated SupportResponse:
-{
+"refused":false,"refusal_reason":null,"top1_score":0.7031,"appointment":n{
   "answer": "General Medicine consultations cost between INR 300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology between INR 500 and INR 1000. Consultation fees are set per specialty and are shown before the patient confirms a booking.",
   "sources": [
     "03_consultation_fee_structure.md"
@@ -562,8 +561,9 @@ Validated SupportResponse:
   "refusal_reason": null,
   "top1_score": 0.7031,
   "appointment": null
-}  
-│
+}
+  │
+│  ull}                                                                       │
 │                                                                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘

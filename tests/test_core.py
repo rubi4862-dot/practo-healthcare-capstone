@@ -114,3 +114,14 @@ def test_budget_and_cache_and_authz():
     for q in ["Fee?", "fee", "FEE !"]:
         cache.get_or_compute(q, lambda x: calls.append(x) or len(calls))
     assert len(calls) == 1 and cache.hits == 2
+
+
+def test_log_masks_question_but_keeps_trace_id(tmp_path):
+    from core.request_log import JsonlLogger
+    import json
+    log = JsonlLogger(tmp_path / "log.jsonl")
+    # a trace id whose digits look like an Indian mobile number must survive unmasked
+    log.log(event="test", trace_id="d21fb59876543210", question="Call me on 9876543210")
+    record = json.loads((tmp_path / "log.jsonl").read_text())
+    assert record["trace_id"] == "d21fb59876543210"
+    assert "9876543210" not in record["question"]

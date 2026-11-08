@@ -1,7 +1,7 @@
 $ MOCK_LLM=1 part3_eval.py
 
 Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1834.18it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 3274.04it/s]
 Q01 How many days in advance can I book an appointment?
      A: Patients can book an in-clinic or online consultation through the Practo app or website up to 30 days in advance. Each booking is confirmed instantly with an appointment ID in the format APT-XXXX, sent by SMS and in-app notification.
      sources=['01_appointment_booking_policy.md'] refused=False
