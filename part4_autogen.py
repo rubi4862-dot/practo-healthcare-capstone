@@ -8,7 +8,8 @@ Team: RoundRobinGroupChat(max_turns=2, custom_message_types=[StructuredMessage[V
 (AutoGen agent names must be Python identifiers, so the hyphens in
 "Policy-Compliance-Reviewer" / "Final-Editor" become underscores.)
 
-Case 1: a grounded draft from the pipeline        -> approved unchanged
+Input: the CrewAI Composer's draft (part2_crew.py) + the retrieved policy context.
+Case 1: the grounded crew draft                   -> approved unchanged
 Case 2: the same draft + an injected ungrounded claim -> revised
 
 MockChatClient is a deterministic autogen_core ChatCompletionClient: it reads the
@@ -29,9 +30,10 @@ from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_core.models import (ChatCompletionClient, CreateResult, LLMMessage, ModelInfo,
                                  RequestUsage)
 
+import part2_crew
 from core import mock_llm
 from core.governance import estimate_tokens
-from core.schemas import Verdict
+from core.schemas import SupportResponse, Verdict
 from rag.build import build_pipeline
 
 DRAFT_RE = re.compile(r"DRAFT:\s*<<<(.+?)>>>", re.DOTALL)
@@ -131,16 +133,28 @@ async def review(draft: str, context: str, label: str) -> Verdict:
     return verdict
 
 
+async def crew_draft(pipe, question: str) -> str:
+    """Run the Part 2 CrewAI crew and return the Composer's validated draft answer.
+    kickoff_async(): CrewAI refuses a blocking kickoff() inside AutoGen's event loop."""
+    part2_crew.PIPELINE = pipe
+    crew = part2_crew.build_crew(part2_crew.MockCrewLLM())
+    crew.verbose = False                    # the full crew trace is in 03_part2_crew.txt
+    result = await crew.kickoff_async(inputs={"question": question})
+    return SupportResponse.model_validate_json(result.raw).answer
+
+
 async def main():
     pipe = build_pipeline()
     q = "How much does a cardiology consultation cost?"
-    resp = pipe.answer(q)
+    draft = await crew_draft(pipe, q)       # draft = CrewAI Composer's output
+    pipe.answer(q)                          # same retrieval, to get the context the reviewer checks against
     context = pipe.last_context.strip()
+    print(f"Question: {q}\nCrewAI Composer draft: {draft}\n")
 
-    v1 = await review(resp.answer, context, "CASE 1: grounded draft -> expect approve unchanged")
-    assert v1.approved and v1.final_answer == resp.answer
+    v1 = await review(draft, context, "CASE 1: grounded draft -> expect approve unchanged")
+    assert v1.approved and v1.final_answer == draft
 
-    injected = resp.answer + " Cardiology consultations are always free for senior citizens."
+    injected = draft + " Cardiology consultations are always free for senior citizens."
     v2 = await review(injected, context, "CASE 2: injected ungrounded claim -> expect revise")
     assert not v2.approved and "senior citizens" not in v2.final_answer
     print("Both cases behaved as expected.")

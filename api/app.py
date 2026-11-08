@@ -2,6 +2,7 @@
 api/app.py — Part 3: FastAPI service.
 
   POST /ask           AskRequest -> AskResponse        (pipeline answer)
+  POST /ask-crew      AskRequest -> AskResponse        (Part 2 CrewAI crew, run via .kickoff())
   POST /add-document  AddDocumentRequest -> AddDocumentResponse (upsert into both collections)
   WS   /ws/chat       {"question": ...} -> SupportResponse JSON, until the client disconnects
 
@@ -15,7 +16,8 @@ import config  # noqa: F401
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 
-from core.governance import BudgetExceeded
+from core.governance import BudgetExceeded, enforce_budget
+from core.guardrails import INJECTION_REFUSAL, detect_injection, mask_pii
 from core.request_log import JsonlLogger
 from core.schemas import (AddDocumentRequest, AddDocumentResponse, AskRequest, AskResponse,
                           SupportResponse)
@@ -24,6 +26,7 @@ from rag.build import build_pipeline
 app = FastAPI(title="Practo Support Agent (MOCK_LLM)")
 LOG = JsonlLogger(config.LOGS_DIR / "requests.jsonl")
 _PIPELINE = None
+_CREW = None
 
 
 def pipeline():
@@ -32,6 +35,18 @@ def pipeline():
     if _PIPELINE is None:
         _PIPELINE = build_pipeline()
     return _PIPELINE
+
+
+def crew_answer(question: str) -> SupportResponse:
+    """Run the Part 2 CrewAI crew (built once) and validate its output schema."""
+    global _CREW
+    import part2_crew                      # imported lazily: only /ask-crew needs CrewAI
+    if _CREW is None:
+        part2_crew.PIPELINE = pipeline()   # the crew's RAG tool uses the same store + threshold
+        _CREW = part2_crew.build_crew(part2_crew.MockCrewLLM())
+        _CREW.verbose = False
+    result = _CREW.kickoff(inputs={"question": question})
+    return SupportResponse.model_validate_json(result.raw)
 
 
 @app.post("/ask", response_model=AskResponse)
@@ -44,6 +59,26 @@ def ask(req: AskRequest) -> AskResponse:
             raise HTTPException(status_code=413, detail=f"Request over budget: {exc}") from exc
         t.update(status_code=200, refused=resp.refused, refusal_reason=resp.refusal_reason,
                  top1_score=resp.top1_score, sources=resp.sources)
+        return AskResponse(trace_id=t["trace_id"], response=resp)
+
+
+@app.post("/ask-crew", response_model=AskResponse)
+def ask_crew(req: AskRequest) -> AskResponse:
+    """Same input guardrails as /ask (budget, injection, PII masking), then the CrewAI crew."""
+    with LOG.trace("POST /ask-crew", question=req.question, session_id=req.session_id) as t:
+        try:
+            enforce_budget(req.question)
+        except BudgetExceeded as exc:
+            t["status_code"] = 413
+            raise HTTPException(status_code=413, detail=f"Request over budget: {exc}") from exc
+        if detect_injection(req.question):
+            resp = SupportResponse(answer=INJECTION_REFUSAL, grounded=True,
+                                   refused=True, refusal_reason="injection")
+        else:
+            masked, _ = mask_pii(req.question)            # the crew never sees the raw number
+            resp = crew_answer(masked)
+        t.update(status_code=200, refused=resp.refused, refusal_reason=resp.refusal_reason,
+                 sources=resp.sources)
         return AskResponse(trace_id=t["trace_id"], response=resp)
 
 

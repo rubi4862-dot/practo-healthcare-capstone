@@ -23,6 +23,45 @@ IDK_ANSWER = (
 )
 
 
+def _is_complete(sentence: str) -> bool:
+    """A whole sentence, not a fragment left by a chunk boundary."""
+    starts_ok = sentence[:1].isupper() or sentence[:1].isdigit()
+    ends_ok = sentence.endswith((".", "!", "?"))
+    return starts_ok and ends_ok
+
+
+def _join_fragments(head: str, tail: str) -> str | None:
+    """Re-join a sentence cut by a chunk boundary. With overlapping fixed-size chunks
+    the last words of `head` repeat at the start of `tail` (need >= 3 shared words)."""
+    h, t = head.split(), tail.split()
+    for k in range(min(len(h), len(t)), 2, -1):
+        if h[-k:] == t[:k]:
+            return " ".join(h + t[k:])
+    return None
+
+
+def _whole_sentences(chunks: list[dict]) -> list[tuple[int, int, str, str]]:
+    """(rank, position, sentence, doc_id) for every whole sentence in the chunks.
+    Fixed-size chunks cut sentences at their edges; those halves are re-joined when
+    both chunks were retrieved, and dropped otherwise (never shown as fragments)."""
+    whole, heads, tails = [], [], []
+    for rank, chunk in enumerate(chunks):
+        for pos, s in enumerate(split_sentences(chunk["text"])):
+            item = (rank, pos, s, chunk["doc_id"])
+            if _is_complete(s):
+                whole.append(item)
+            elif s.endswith((".", "!", "?")):
+                tails.append(item)                  # starts mid-sentence
+            else:
+                heads.append(item)                  # ends mid-sentence
+    for rank, pos, head, doc in heads:
+        for _, _, tail, tail_doc in tails:
+            joined = _join_fragments(head, tail) if doc == tail_doc else None
+            if joined and _is_complete(joined):
+                whole.append((rank, pos, joined, doc))
+    return whole
+
+
 def compose_grounded_answer(question: str, chunks: list[dict], max_sentences: int = 2) -> tuple[str, list[str]]:
     """
     Extractive answer: pick the context sentences that share the most content words
@@ -32,10 +71,9 @@ def compose_grounded_answer(question: str, chunks: list[dict], max_sentences: in
     """
     q = content_tokens(question)
     candidates = []
-    for rank, chunk in enumerate(chunks):
-        for pos, sentence in enumerate(split_sentences(chunk["text"])):
-            overlap = len(q & content_tokens(sentence))
-            candidates.append((overlap, -rank, -pos, sentence, chunk["doc_id"]))
+    for rank, pos, sentence, doc_id in _whole_sentences(chunks):
+        overlap = len(q & content_tokens(sentence))
+        candidates.append((overlap, -rank, -pos, sentence, doc_id))
     candidates.sort(reverse=True)
 
     picked, sources = [], []
@@ -46,9 +84,11 @@ def compose_grounded_answer(question: str, chunks: list[dict], max_sentences: in
             picked.append(sentence)
             if doc_id not in sources:
                 sources.append(doc_id)
-    if not picked and chunks:                       # fall back to the top chunk's first sentence
-        picked = [split_sentences(chunks[0]["text"])[0]]
-        sources = [chunks[0]["doc_id"]]
+    if not picked and candidates:                   # fall back to the best-ranked whole sentence
+        _, _, _, sentence, doc_id = max(candidates, key=lambda c: (c[1], c[2]))
+        picked, sources = [sentence], [doc_id]
+    if not picked and chunks:                       # last resort: the top chunk itself
+        picked, sources = [chunks[0]["text"]], [chunks[0]["doc_id"]]
     return " ".join(picked), sources
 
 

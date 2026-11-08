@@ -23,9 +23,11 @@ class KBStore:
     def __init__(self, kb_dir=config.KB_DIR):
         self.model = SentenceTransformer(config.EMBED_MODEL, device="cpu")
         self.client = chromadb.EphemeralClient(settings=Settings(anonymized_telemetry=False))
+        # hnsw:search_ef=100: HNSW search is approximate and Chroma's default (10) can miss
+        # a chunk added later via /add-document; on ~50 chunks 100 is effectively exact.
         self.collections = {
             s: self.client.get_or_create_collection(
-                name=f"practo_kb_{s}", metadata={"hnsw:space": "cosine"})
+                name=f"practo_kb_{s}", metadata={"hnsw:space": "cosine", "hnsw:search_ef": 100})
             for s in STRATEGIES
         }
         self.docs = load_kb(kb_dir)

@@ -1,14 +1,14 @@
 $ MOCK_LLM=1 part3_eval.py
 
 Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 3177.76it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1834.18it/s]
 Q01 How many days in advance can I book an appointment?
      A: Patients can book an in-clinic or online consultation through the Practo app or website up to 30 days in advance. Each booking is confirmed instantly with an appointment ID in the format APT-XXXX, sent by SMS and in-app notification.
      sources=['01_appointment_booking_policy.md'] refused=False
      accuracy=5.0  grounding=5.0  completeness=5.0  safety=5.0
 
 Q02 What refund do I get if I cancel less than 4 hours before?
-     A: Cancellations made less than 4 hours before the slot receive a 50% refund. Cancellations made less than 4 hours before the
+     A: Cancellations made less than 4 hours before the slot receive a 50% refund. Appointments can be cancelled free of charge up to 4 hours before the scheduled start time, and the full consultation fee is refunded to the original payment method within 5-7 working days.
      sources=['02_cancellation_rescheduling_window.md'] refused=False
      accuracy=5.0  grounding=5.0  completeness=5.0  safety=5.0
 
@@ -23,12 +23,12 @@ Q04 Can I get cashless insurance for an outpatient consultation?
      accuracy=5.0  grounding=5.0  completeness=5.0  safety=5.0
 
 Q05 How quickly does the doctor review a prescription refill request?
-     A: The doctor reviews each refill request within 24 hours and may approve it, ask for a follow-up visit, A prescription refill can be requested through the app for ongoing medicines that the same doctor prescribed within the last 90 days.
+     A: The doctor reviews each refill request within 24 hours and may approve it, ask for a follow-up visit, or decline it. A prescription refill can be requested through the app for ongoing medicines that the same doctor prescribed within the last 90 days.
      sources=['05_prescription_refill_policy.md'] refused=False
      accuracy=5.0  grounding=5.0  completeness=5.0  safety=5.0
 
 Q06 How long does a biopsy report take?
-     A: tests and biopsy reports can take 3 to 7 working days. Culture tests and biopsy reports can take 3 to 7 working
+     A: Culture tests and biopsy reports can take 3 to 7 working days. Reports are uploaded to the patient's Practo account, and the patient receives a notification as soon as a report is ready.
      sources=['06_lab_test_turnaround_times.md'] refused=False
      accuracy=5.0  grounding=5.0  completeness=5.0  safety=5.0
 
@@ -58,7 +58,7 @@ Q11 How much does a second opinion consultation cost?
      accuracy=5.0  grounding=5.0  completeness=5.0  safety=5.0
 
 Q12 What is the surcharge for a home visit?
-     A: A home-visit surcharge of INR 500 is added on top of the regular consultation fee. Home visits are not available for emergencies or for procedures
+     A: A home-visit surcharge of INR 500 is added on top of the regular consultation fee. Home visits are available for patients over 65 years old, patients with limited mobility, and children under 2 years old, within 10 km of a partner clinic.
      sources=['12_home_visit_eligibility.md'] refused=False
      accuracy=5.0  grounding=5.0  completeness=5.0  safety=5.0
 

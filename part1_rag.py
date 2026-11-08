@@ -28,17 +28,9 @@ CALIBRATION_OUT_OF_SCOPE = [
     "Which medicine should I take for a migraine?",
 ]
 
-# ---- Demo: >=5 in-scope + 1 out-of-scope -------------------------------------
-DEMO_QUERIES = [
-    "What is the cancellation refund if I cancel 2 hours before my slot?",
-    "How much does an orthopedics consultation cost?",
-    "Can I get a prescription refill for a controlled drug?",
-    "How long do culture test reports take?",
-    "Is there an extra charge for a home visit?",
-    "Can you suggest a good pizza place in Bangalore?",          # out of scope
-]
-
 # ---- Retrieval evaluation set: ground-truth RELEVANT documents per query ------
+# Q01-Q05 are also the in-scope grounded-generation demo queries below, so P/R is
+# computed on the same queries that are demonstrated (brief, Task 5).
 PR_QUERIES = [
     ("How much does a cardiology consultation cost?", {"03_consultation_fee_structure.md"}),
     ("Can I get a refund if I cancel 2 hours before my appointment?", {"02_cancellation_rescheduling_window.md"}),
@@ -52,6 +44,11 @@ PR_QUERIES = [
     ("Can I refill my prescription without seeing the doctor again?", {"05_prescription_refill_policy.md"}),
     ("How do I get a second opinion from another doctor?", {"11_second_opinion_process.md"}),
     ("How far in advance can I book and how many appointments can I hold?", {"01_appointment_booking_policy.md"}),
+]
+
+# ---- Demo: >=5 in-scope (the first 5 P/R queries) + 1 out-of-scope ------------
+DEMO_QUERIES = [q for q, _ in PR_QUERIES[:5]] + [
+    "Can you suggest a good pizza place in Bangalore?",          # out of scope
 ]
 
 

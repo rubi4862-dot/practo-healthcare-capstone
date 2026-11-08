@@ -28,6 +28,10 @@ post("/ask", {"question": "How long do thyroid test reports take?"})
 print("=== POST /ask (contains a phone number -> masked in the log) ===")
 post("/ask", {"question": "Call me on 9876543210 - can I cancel for free 5 hours before?"})
 
+print("=== POST /ask-crew (the Part 2 CrewAI crew behind the API; phone masked first) ===")
+post("/ask-crew", {"question": "My number is 9876543210. What is the status of APT-1024 "
+                               "and is a follow-up within 7 days free?"})
+
 print("=== POST /ask (Pydantic validation error: empty question) ===")
 post("/ask", {"question": ""})
 

@@ -5,7 +5,7 @@ $ MOCK_LLM=1 part1_rag.py
 1. Build two ChromaDB collections (upsert)
 ==============================================================================
 Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 2850.43it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1575.26it/s]
 Embedding model : sentence-transformers/all-MiniLM-L6-v2 (local, CPU)
 Fixed-size      : 40 words, overlap 10 words
 Sentence-based  : 2 sentences per chunk
@@ -144,30 +144,30 @@ Chosen collection: practo_kb_fixed, threshold 0.397 -> saved to results\calibrat
 4. Grounded generation demo (MOCK_LLM, collection practo_kb_fixed)
 ==============================================================================
 
-Q: What is the cancellation refund if I cancel 2 hours before my slot?
-   top1=0.7739  refused=False (None)
-A: Cancellations made less than 4 hours before the slot receive a 50% refund. the change is made at least 2 hours before the original slot.
-   sources: ['02_cancellation_rescheduling_window.md']
-
-Q: How much does an orthopedics consultation cost?
-   top1=0.6756  refused=False (None)
+Q: How much does a cardiology consultation cost?
+   top1=0.6718  refused=False (None)
 A: Orthopedics consultations range from INR 600 to INR 1200, and Cardiology consultations range from INR 800 to INR 1500. General Medicine consultations cost between INR 300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology between INR 500 and INR 1000.
    sources: ['03_consultation_fee_structure.md']
 
-Q: Can I get a prescription refill for a controlled drug?
-   top1=0.736  refused=False (None)
-A: Refills are never issued for controlled or scheduled drugs, which always require a fresh consultation. Approved refills appear as a digital prescription that the patient can use
-   sources: ['05_prescription_refill_policy.md']
+Q: Can I get a refund if I cancel 2 hours before my appointment?
+   top1=0.7057  refused=False (None)
+A: An appointment can be rescheduled at no cost up to two times, as long as the change is made at least 2 hours before the original slot. Cancellations made less than 4 hours before the slot receive a 50% refund.
+   sources: ['02_cancellation_rescheduling_window.md']
 
-Q: How long do culture test reports take?
-   top1=0.573  refused=False (None)
-A: Culture tests and biopsy reports can take 3 to 7 working tests and biopsy reports can take 3 to 7 working days.
+Q: How long until my thyroid test results are ready?
+   top1=0.5386  refused=False (None)
+A: Routine blood tests such as a complete blood count or lipid profile are reported within 24 hours of sample collection. Thyroid, vitamin, and hormone panels usually take 48 hours.
    sources: ['06_lab_test_turnaround_times.md']
 
-Q: Is there an extra charge for a home visit?
-   top1=0.5834  refused=False (None)
-A: A home-visit surcharge of INR 500 is added on top of the regular consultation fee. Home visits are not available for emergencies or for procedures
-   sources: ['12_home_visit_eligibility.md']
+Q: Is a follow-up visit free and can I do it by video call?
+   top1=0.5118  refused=False (None)
+A: A follow-up visit with the same doctor within 7 days of the original consultation is free of charge. A follow-up booked between 8 and 14 days after the original visit gets a 50% discount on the consultation fee.
+   sources: ['10_follow_up_visit_discount_policy.md']
+
+Q: Can I claim insurance for my consultation and will Practo share my records with the insurer?
+   top1=0.6236  refused=False (None)
+A: Patients with health insurance pay the consultation fee upfront and then claim reimbursement from their insurer. After the visit, the patient can download an itemised invoice and the doctor's consultation note from the Practo app to attach to the claim.
+   sources: ['04_insurance_claim_process.md']
 
 Q: Can you suggest a good pizza place in Bangalore?
    top1=0.1517  refused=True (out_of_scope)

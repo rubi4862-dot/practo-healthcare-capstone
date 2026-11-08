@@ -1,7 +1,7 @@
 $ MOCK_LLM=1 part2_guardrails.py
 
 Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 2821.94it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1813.44it/s]
 ==============================================================================
 1. INPUT GUARDRAIL - PII masking
 ==============================================================================
@@ -9,7 +9,7 @@ raw input      : My number is +91 98765 43210. How long do lipid profile reports
 masked input   : My number is [PHONE_REDACTED]. How long do lipid profile reports take?   (masked: ['phone'])
 injection check: clean
 refused        : False (None)
-answer         : Routine blood tests such as a complete blood count or lipid profile are reported within 24 hours of sample collection. Culture tests and biopsy reports can take 3 to 7 working
+answer         : Routine blood tests such as a complete blood count or lipid profile are reported within 24 hours of sample collection. Culture tests and biopsy reports can take 3 to 7 working days.
 
 ==============================================================================
 2. INPUT GUARDRAIL - prompt injection

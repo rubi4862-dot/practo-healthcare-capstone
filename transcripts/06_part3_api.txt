@@ -2,13 +2,42 @@ $ MOCK_LLM=1 part3_api_demo.py
 
 === POST /ask (normal) ===
 Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 2414.40it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1848.75it/s]
 POST /ask {"question": "How long do thyroid test reports take?"}
-  -> 200 {"trace_id": "314e59eaefcf4834", "response": {"answer": "Culture tests and biopsy reports can take 3 to 7 working tests and biopsy reports can take 3 to 7 working days.", "sources": ["06_lab_test_turnaround_times.md"], "grounded": true, "refused": false, "refusal_reason": null, "top1_score": 0.657, "appointment": null}}
+  -> 200 {"trace_id": "7333035d7edd45c9", "response": {"answer": "Culture tests and biopsy reports can take 3 to 7 working days. Thyroid, vitamin, and hormone panels usually take 48 hours.", "sources": ["06_lab_test_turnaround_times.md"], "grounded": true, "refused": false, "refusal_reason": null, "top1_score": 0.657, "appointment": null}}
 
 === POST /ask (contains a phone number -> masked in the log) ===
 POST /ask {"question": "Call me on 9876543210 - can I cancel for free 5 hours before?"}
-  -> 200 {"trace_id": "a080be1243ac4fe0", "response": {"answer": "Appointments can be cancelled free of charge up to 4 hours before the scheduled start time, and the full consultation fee is refunded to the original payment method within 5-7 working days. Cancellations made less than 4 hours before the", "sources": ["02_cancellation_rescheduling_window.md"], "grounded": true, "refused": false, "refusal_rea
+  -> 200 {"trace_id": "c82c5b41bbe94974", "response": {"answer": "Appointments can be cancelled free of charge up to 4 hours before the scheduled start time, and the full consultation fee is refunded to the original payment method within 5-7 working days. Cancellations made less than 4 hours before the slot receive a 50% refund.", "sources": ["02_cancellation_rescheduling_window.md"], "grounded": true, "re
+
+=== POST /ask-crew (the Part 2 CrewAI crew behind the API; phone masked first) ===
+┌────────────────────────── ✨ Update Available ✨ ───────────────────────────┐
+│                                                                             │
+│  A new version of CrewAI is available!                                      │
+│                                                                             │
+│  Current version: 1.15.35                                                   │
+│  Latest version:  1.15.37                                                   │
+│                                                                             │
+│  To update, run: uv sync --upgrade-package crewai                           │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────── 🚀 Crew Execution Started ─────────────────────────┐
+│                                                                             │
+│  Crew Execution Started                                                     │
+│  Name: crew                                                                 │
+│  ID: 9dd419be-3523-4d81-bed5-50155caa2948                                   │
+│                                                                             │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+Using an approximate input token count for model 'mock-llm': assuming one token per four characters because a native token count is unavailable.
+POST /ask-crew {"question": "My number is 9876543210. What is the status of APT-1024 and is a follow-up within 7 days free?"}
+  -> 200 {"trace_id": "41686406cf654bb9", "response": {"answer": "Appointment APT-1024 (Cardiology) is Completed with a consultation fee of INR 1350. The doctor marked a follow-up as required. Escalation score 0.947 is at or above the threshold 0.725, so it is escalated to the support team.", "sources": [], "grounded": true, "refused": false, "refusal_reason": null, "top1_score": null, "appointment": {"fou
 
 === POST /ask (Pydantic validation error: empty question) ===
 POST /ask {"question": ""}
@@ -20,13 +49,13 @@ POST /ask {"question": "Please explain the refund rules. Please explain the refu
 
 === /add-document: new knowledge becomes answerable ===
 POST /ask {"question": "Is free parking available at partner clinics?"}
-  -> 200 {"trace_id": "6b463832d4764fc5", "response": {"answer": "Partner clinics will triage walk-in patients with urgent symptoms ahead of the queue. if a slot is free, and booked patients always take priority.", "sources": ["08_emergency_visit_protocol.md", "01_appointment_booking_policy.md"], "grounded": true, "refused": false, "refusal_reason": null, "top1_score": 0.4486, "appointment": null}}
+  -> 200 {"trace_id": "3b1667e17ef34d32", "response": {"answer": "Partner clinics will triage walk-in patients with urgent symptoms ahead of the queue. Patients can book an in-clinic or online consultation through the Practo app or website up to 30 days in advance.", "sources": ["08_emergency_visit_protocol.md", "01_appointment_booking_policy.md"], "grounded": true, "refused": false, "refusal_reason": null
 
 POST /add-document {"doc_id": "13_clinic_parking_policy.md", "title": "Clinic Parking Policy", "content": "Partner clinics offer 
-  -> 200 {"trace_id": "650fd97ebe7246cf", "doc_id": "13_clinic_parking_policy.md", "chunks_upserted": {"fixed": 1, "sentence": 1}}
+  -> 200 {"trace_id": "cc9c6fd94e354896", "doc_id": "13_clinic_parking_policy.md", "chunks_upserted": {"fixed": 1, "sentence": 1}}
 
 POST /ask {"question": "Is free parking available at partner clinics?"}
-  -> 200 {"trace_id": "173846993b344efd", "response": {"answer": "Partner clinics will triage walk-in patients with urgent symptoms ahead of the queue. if a slot is free, and booked patients always take priority.", "sources": ["08_emergency_visit_protocol.md", "01_appointment_booking_policy.md"], "grounded": true, "refused": false, "refusal_reason": null, "top1_score": 0.4486, "appointment": null}}
+  -> 200 {"trace_id": "c476d23acc124b61", "response": {"answer": "Partner clinics offer free parking for patients for up to 2 hours during their appointment. Partner clinics will triage walk-in patients with urgent symptoms ahead of the queue.", "sources": ["13_clinic_parking_policy.md", "08_emergency_visit_protocol.md"], "grounded": true, "refused": false, "refusal_reason": null, "top1_score": 0.8371, "ap
 
 === WebSocket /ws/chat (two messages, then the client disconnects) ===
 WS -> What is the status of APT-1037?
@@ -36,13 +65,14 @@ WS -> Who won the football match yesterday?
 WS <- I don't know based on the Practo knowledge base. I can help with appointments, fees, cancellations, refills, lab reports, telemedicine, insurance, privacy, follow-ups, second opinions and home visits.
 
 === logs/requests.jsonl ===
-{"ts": "2026-11-08T07:51:26.716+00:00", "event": "POST /ask", "trace_id": "314e59eaefcf4834", "question": "How long do thyroid test reports take?", "session_id": null, "status_code": 200, "refused": false, "refusal_reason": null, "top1_score": 0.657, "sources": ["06_lab_test_turnaround_times.md"], "latency_ms": 1394.64}
-{"ts": "2026-11-08T07:51:26.744+00:00", "event": "POST /ask", "trace_id": "a080be1243ac4fe0", "question": "Call me on [PHONE_REDACTED] - can I cancel for free 5 hours before?", "session_id": null, "status_code": 200, "refused": false, "refusal_reason": null, "top1_score": 0.5091, "sources": ["02_cancellation_rescheduling_window.md"], "latency_ms": 18.87}
-{"ts": "2026-11-08T07:51:26.774+00:00", "event": "POST /ask", "trace_id": "9152cf573d5c45c1", "question": "Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. ", "session_id": null, "status_code": 413, "error": "HTTPException: 413: Request over budget: estimated cost $0.005565 exceeds cap $0.005", "latency_ms": 0.05}
-{"ts": "2026-11-08T07:51:26.800+00:00", "event": "POST /ask", "trace_id": "6b463832d4764fc5", "question": "Is free parking available at partner clinics?", "session_id": null, "status_code": 200, "refused": false, "refusal_reason": null, "top1_score": 0.4486, "sources": ["08_emergency_visit_protocol.md", "01_appointment_booking_policy.md"], "latency_ms": 18.13}
-{"ts": "2026-11-08T07:51:26.862+00:00", "event": "POST /add-document", "trace_id": "650fd97ebe7246cf", "doc_id": "13_clinic_parking_policy.md", "status_code": 200, "chunks_upserted": {"fixed": 1, "sentence": 1}, "latency_ms": 52.32}
-{"ts": "2026-11-08T07:51:26.891+00:00", "event": "POST /ask", "trace_id": "173846993b344efd", "question": "Is free parking available at partner clinics?", "session_id": null, "status_code": 200, "refused": false, "refusal_reason": null, "top1_score": 0.4486, "sources": ["08_emergency_visit_protocol.md", "01_appointment_booking_policy.md"], "latency_ms": 19.86}
-{"ts": "2026-11-08T07:51:26.899+00:00", "event": "WS connect"}
-{"ts": "2026-11-08T07:51:26.922+00:00", "event": "WS message", "trace_id": "0afbad2a17fd4c3f", "question": "What is the status of APT-1037?", "refused": false, "refusal_reason": null, "latency_ms": 20.54}
-{"ts": "2026-11-08T07:51:26.942+00:00", "event": "WS message", "trace_id": "8f3b3158f89b46ed", "question": "Who won the football match yesterday?", "refused": true, "refusal_reason": "out_of_scope", "latency_ms": 18.04}
-{"ts": "2026-11-08T07:51:26.945+00:00", "event": "WS disconnect", "code": 1000}
+{"ts": "2026-11-08T09:43:40.554+00:00", "event": "POST /ask", "trace_id": "7333035d7edd45c9", "question": "How long do thyroid test reports take?", "session_id": null, "status_code": 200, "refused": false, "refusal_reason": null, "top1_score": 0.657, "sources": ["06_lab_test_turnaround_times.md"], "latency_ms": 1855.91}
+{"ts": "2026-11-08T09:43:40.597+00:00", "event": "POST /ask", "trace_id": "c82c5b41bbe94974", "question": "Call me on [PHONE_REDACTED] - can I cancel for free 5 hours before?", "session_id": null, "status_code": 200, "refused": false, "refusal_reason": null, "top1_score": 0.5091, "sources": ["02_cancellation_rescheduling_window.md"], "latency_ms": 23.11}
+{"ts": "2026-11-08T09:43:47.612+00:00", "event": "POST /ask-crew", "trace_id": "41686406cf654bb9", "question": "My number is [PHONE_REDACTED]. What is the status of APT-1024 and is a follow-up within 7 days free?", "session_id": null, "status_code": 200, "refused": false, "refusal_reason": null, "sources": [], "latency_ms": 7001.19}
+{"ts": "2026-11-08T09:43:47.635+00:00", "event": "POST /ask", "trace_id": "35c9f5a2879649a1", "question": "Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. Please explain the refund rules. ", "session_id": null, "status_code": 413, "error": "HTTPException: 413: Request over budget: estimated cost $0.005565 exceeds cap $0.005", "latency_ms": 0.07}
+{"ts": "2026-11-08T09:43:47.671+00:00", "event": "POST /ask", "trace_id": "3b1667e17ef34d32", "question": "Is free parking available at partner clinics?", "session_id": null, "status_code": 200, "refused": false, "refusal_reason": null, "top1_score": 0.4486, "sources": ["08_emergency_visit_protocol.md", "01_appointment_booking_policy.md"], "latency_ms": 24.94}
+{"ts": "2026-11-08T09:43:47.832+00:00", "event": "POST /add-document", "trace_id": "cc9c6fd94e354896", "doc_id": "13_clinic_parking_policy.md", "status_code": 200, "chunks_upserted": {"fixed": 1, "sentence": 1}, "latency_ms": 146.64}
+{"ts": "2026-11-08T09:43:47.872+00:00", "event": "POST /ask", "trace_id": "c476d23acc124b61", "question": "Is free parking available at partner clinics?", "session_id": null, "status_code": 200, "refused": false, "refusal_reason": null, "top1_score": 0.8371, "sources": ["13_clinic_parking_policy.md", "08_emergency_visit_protocol.md"], "latency_ms": 28.1}
+{"ts": "2026-11-08T09:43:47.884+00:00", "event": "WS connect"}
+{"ts": "2026-11-08T09:43:47.913+00:00", "event": "WS message", "trace_id": "18038d8a81e946c2", "question": "What is the status of APT-1037?", "refused": false, "refusal_reason": null, "latency_ms": 27.36}
+{"ts": "2026-11-08T09:43:47.942+00:00", "event": "WS message", "trace_id": "17acc6a143c34551", "question": "Who won the football match yesterday?", "refused": true, "refusal_reason": "out_of_scope", "latency_ms": 25.2}
+{"ts": "2026-11-08T09:43:47.945+00:00", "event": "WS disconnect", "code": 1000}

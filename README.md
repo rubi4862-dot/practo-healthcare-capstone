@@ -88,7 +88,8 @@ score. The measured values (written by the script):
 ### Retrieval precision / recall (document level, top-3 chunks)
 
 For each of 10 queries with hand-labelled relevant documents: precision = relevant retrieved docs /
-retrieved docs, recall = relevant retrieved docs / relevant docs. Per-query arithmetic is in
+retrieved docs, recall = relevant retrieved docs / relevant docs. Q01–Q05 are the same five
+in-scope queries used in the grounded-generation demo. Per-query arithmetic is in
 `transcripts/01_part1_rag.txt`.
 
 <!-- RETRIEVAL:START -->
@@ -140,8 +141,10 @@ deliberately faulty generator appends an invented claim, and the pipeline refuse
 
 ## Part 3 — API, logging, evaluation
 
-* `POST /ask`, `POST /add-document` (Pydantic request/response models) and WebSocket `/ws/chat`,
-  which handles `WebSocketDisconnect` cleanly. Run: `uvicorn api.app:app --port 8000`.
+* `POST /ask`, `POST /ask-crew`, `POST /add-document` (Pydantic request/response models) and
+  WebSocket `/ws/chat`, which handles `WebSocketDisconnect` cleanly. `/ask-crew` serves the Part 2
+  CrewAI crew (`.kickoff()`) behind the same input guardrails; `/ask` and `/ws/chat` use the faster
+  single-pass pipeline built on the same tools and mock LLM. Run: `uvicorn api.app:app --port 8000`.
 * `logs/requests.jsonl`: one JSON line per request with `trace_id`, `latency_ms`, status and refusal
   reason. Questions are PII-masked before logging. Over-budget requests return **413**.
 * **LLM-as-judge (MOCK_LLM)** on 15 queries (one per KB topic, plus 3 out-of-scope/edge). The rubric is
@@ -173,7 +176,8 @@ deliberately faulty generator appends an invented claim, and the pipeline refuse
 **AutoGen** (`part4_autogen.py`): `RoundRobinGroupChat([Policy_Compliance_Reviewer, Final_Editor],
 max_turns=2, custom_message_types=[StructuredMessage[Verdict]])`. `Final_Editor` has
 `output_content_type=Verdict` (`approved: bool, final_answer: str, reason: str`). AutoGen names must
-be identifiers, so the hyphens become underscores. Case 1, a grounded draft, is approved unchanged.
+be identifiers, so the hyphens become underscores. The input is the CrewAI Composer's draft (the
+script runs the Part 2 crew) plus the retrieved policy context. Case 1, the grounded draft, is approved unchanged.
 Case 2, the same draft with an injected ungrounded claim, is revised and the claim removed.
 
 **Least autonomy.** `core/governance.AGENT_TOOL_ALLOWLIST` is the single source of truth, and the crew
@@ -199,6 +203,18 @@ prices of $0.003/1k input and $0.015/1k output tokens.
 **Response cache.** In memory, keyed on the normalised query (lower-cased, punctuation stripped,
 whitespace collapsed). The transcript shows three phrasings of one question costing **one** MOCK_LLM
 generation (`llm_calls` counter, cache hits/misses).
+
+## Known limitations
+
+* **Emergency phrasing.** Short urgent questions ("someone has signs of a stroke", "I have chest
+  pain right now") can score below the calibrated threshold, so the agent answers "I don't know"
+  instead of quoting the emergency protocol (eval query 8). A production version would route
+  emergency keywords straight to the emergency protocol before retrieval.
+* **Similarity-only threshold.** A question can pass the threshold on shared words alone: before
+  the parking document is added, "Is free parking available at partner clinics?" is answered from
+  other policies that mention partner clinics (`transcripts/06_part3_api.txt`).
+* **Fixed-size chunks cut sentences.** The composer only quotes whole sentences: a sentence cut at
+  a chunk boundary is re-joined from the two overlapping chunks, or skipped if only one was retrieved.
 
 ## Transcripts (`transcripts/`)
 
