@@ -1,0 +1,98 @@
+{
+  "strategy": "fixed",
+  "threshold": 0.397,
+  "per_strategy": {
+    "fixed": {
+      "in_scope": [
+        [
+          "How much does a dermatology consultation cost?",
+          0.7031
+        ],
+        [
+          "Can I reschedule my appointment and how many times?",
+          0.5728
+        ],
+        [
+          "When will my blood test report be ready?",
+          0.5822
+        ],
+        [
+          "Is video consultation available for pediatrics?",
+          0.6777
+        ],
+        [
+          "Does Practo share my medical records with my employer?",
+          0.6887
+        ]
+      ],
+      "out_of_scope": [
+        [
+          "What is the weather in Mumbai today?",
+          0.0661
+        ],
+        [
+          "Who won the IPL final this year?",
+          0.0459
+        ],
+        [
+          "Recommend a good laptop for programming.",
+          0.0795
+        ],
+        [
+          "Which medicine should I take for a migraine?",
+          0.2213
+        ]
+      ],
+      "min_in_scope": 0.5728,
+      "max_out_of_scope": 0.2213,
+      "threshold": 0.397,
+      "separated": true
+    },
+    "sentence": {
+      "in_scope": [
+        [
+          "How much does a dermatology consultation cost?",
+          0.7031
+        ],
+        [
+          "Can I reschedule my appointment and how many times?",
+          0.6633
+        ],
+        [
+          "When will my blood test report be ready?",
+          0.601
+        ],
+        [
+          "Is video consultation available for pediatrics?",
+          0.6847
+        ],
+        [
+          "Does Practo share my medical records with my employer?",
+          0.6887
+        ]
+      ],
+      "out_of_scope": [
+        [
+          "What is the weather in Mumbai today?",
+          0.0581
+        ],
+        [
+          "Who won the IPL final this year?",
+          0.0236
+        ],
+        [
+          "Recommend a good laptop for programming.",
+          0.0911
+        ],
+        [
+          "Which medicine should I take for a migraine?",
+          0.217
+        ]
+      ],
+      "min_in_scope": 0.601,
+      "max_out_of_scope": 0.217,
+      "threshold": 0.409,
+      "separated": true
+    }
+  }
+}

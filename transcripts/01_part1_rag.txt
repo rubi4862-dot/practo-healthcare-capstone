@@ -1,0 +1,177 @@
+$ MOCK_LLM=1 part1_rag.py
+
+
+==============================================================================
+1. Build two ChromaDB collections (upsert)
+==============================================================================
+Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 2850.43it/s]
+Embedding model : sentence-transformers/all-MiniLM-L6-v2 (local, CPU)
+Fixed-size      : 40 words, overlap 10 words
+Sentence-based  : 2 sentences per chunk
+Chunks per collection: {'fixed': 34, 'sentence': 24}
+
+  fixed chunks of 02_cancellation_rescheduling_window.md:
+    - Appointments can be cancelled free of charge up to 4 hours before the scheduled start time, and the full consultation fee is refunded to the original payment method within 5-7 working days. Cancellations made less than 4 hours before the
+    - working days. Cancellations made less than 4 hours before the slot receive a 50% refund. An appointment can be rescheduled at no cost up to two times, as long as the change is made at least 2 hours before the
+    - the change is made at least 2 hours before the original slot. A patient who does not show up without cancelling is marked as a No-Show and is not eligible for a refund.
+
+  sentence chunks of 02_cancellation_rescheduling_window.md:
+    - Appointments can be cancelled free of charge up to 4 hours before the scheduled start time, and the full consultation fee is refunded to the original payment method within 5-7 working days. Cancellations made less than 4 hours before the slot receive a 50% refund.
+    - An appointment can be rescheduled at no cost up to two times, as long as the change is made at least 2 hours before the original slot. A patient who does not show up without cancelling is marked as a No-Show and is not eligible for a refund.
+
+==============================================================================
+2. Document-level precision / recall @ top-3 chunks
+==============================================================================
+
+--- collection: practo_kb_fixed ---
+Q01 How much does a cardiology consultation cost?
+     retrieved docs: ['03_consultation_fee_structure.md', '07_telemedicine_eligibility.md']
+     relevant docs : ['03_consultation_fee_structure.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q02 Can I get a refund if I cancel 2 hours before my appointment?
+     retrieved docs: ['02_cancellation_rescheduling_window.md']
+     relevant docs : ['02_cancellation_rescheduling_window.md']
+     P = 1/1 = 1.000   R = 1/1 = 1.000
+Q03 How long until my thyroid test results are ready?
+     retrieved docs: ['06_lab_test_turnaround_times.md', '11_second_opinion_process.md']
+     relevant docs : ['06_lab_test_turnaround_times.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q04 Is a follow-up visit free and can I do it by video call?
+     retrieved docs: ['10_follow_up_visit_discount_policy.md', '07_telemedicine_eligibility.md']
+     relevant docs : ['07_telemedicine_eligibility.md', '10_follow_up_visit_discount_policy.md']
+     P = 2/2 = 1.000   R = 2/2 = 1.000
+Q05 Can I claim insurance for my consultation and will Practo share my records with the insurer?
+     retrieved docs: ['04_insurance_claim_process.md', '09_patient_data_privacy_policy.md']
+     relevant docs : ['04_insurance_claim_process.md', '09_patient_data_privacy_policy.md']
+     P = 2/2 = 1.000   R = 2/2 = 1.000
+Q06 My father is 70 and cannot travel, can a doctor come home?
+     retrieved docs: ['12_home_visit_eligibility.md', '07_telemedicine_eligibility.md']
+     relevant docs : ['12_home_visit_eligibility.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q07 I have chest pain right now, what should I do?
+     retrieved docs: ['08_emergency_visit_protocol.md', '11_second_opinion_process.md']
+     relevant docs : ['08_emergency_visit_protocol.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q08 Can I refill my prescription without seeing the doctor again?
+     retrieved docs: ['05_prescription_refill_policy.md']
+     relevant docs : ['05_prescription_refill_policy.md']
+     P = 1/1 = 1.000   R = 1/1 = 1.000
+Q09 How do I get a second opinion from another doctor?
+     retrieved docs: ['11_second_opinion_process.md']
+     relevant docs : ['11_second_opinion_process.md']
+     P = 1/1 = 1.000   R = 1/1 = 1.000
+Q10 How far in advance can I book and how many appointments can I hold?
+     retrieved docs: ['01_appointment_booking_policy.md']
+     relevant docs : ['01_appointment_booking_policy.md']
+     P = 1/1 = 1.000   R = 1/1 = 1.000
+MEAN  precision = 0.800   recall = 1.000
+
+--- collection: practo_kb_sentence ---
+Q01 How much does a cardiology consultation cost?
+     retrieved docs: ['03_consultation_fee_structure.md', '11_second_opinion_process.md']
+     relevant docs : ['03_consultation_fee_structure.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q02 Can I get a refund if I cancel 2 hours before my appointment?
+     retrieved docs: ['02_cancellation_rescheduling_window.md', '10_follow_up_visit_discount_policy.md']
+     relevant docs : ['02_cancellation_rescheduling_window.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q03 How long until my thyroid test results are ready?
+     retrieved docs: ['06_lab_test_turnaround_times.md', '11_second_opinion_process.md']
+     relevant docs : ['06_lab_test_turnaround_times.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q04 Is a follow-up visit free and can I do it by video call?
+     retrieved docs: ['10_follow_up_visit_discount_policy.md', '07_telemedicine_eligibility.md']
+     relevant docs : ['07_telemedicine_eligibility.md', '10_follow_up_visit_discount_policy.md']
+     P = 2/2 = 1.000   R = 2/2 = 1.000
+Q05 Can I claim insurance for my consultation and will Practo share my records with the insurer?
+     retrieved docs: ['04_insurance_claim_process.md', '09_patient_data_privacy_policy.md']
+     relevant docs : ['04_insurance_claim_process.md', '09_patient_data_privacy_policy.md']
+     P = 2/2 = 1.000   R = 2/2 = 1.000
+Q06 My father is 70 and cannot travel, can a doctor come home?
+     retrieved docs: ['12_home_visit_eligibility.md', '07_telemedicine_eligibility.md']
+     relevant docs : ['12_home_visit_eligibility.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q07 I have chest pain right now, what should I do?
+     retrieved docs: ['08_emergency_visit_protocol.md', '11_second_opinion_process.md', '07_telemedicine_eligibility.md']
+     relevant docs : ['08_emergency_visit_protocol.md']
+     P = 1/3 = 0.333   R = 1/1 = 1.000
+Q08 Can I refill my prescription without seeing the doctor again?
+     retrieved docs: ['05_prescription_refill_policy.md', '11_second_opinion_process.md']
+     relevant docs : ['05_prescription_refill_policy.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q09 How do I get a second opinion from another doctor?
+     retrieved docs: ['11_second_opinion_process.md', '10_follow_up_visit_discount_policy.md']
+     relevant docs : ['11_second_opinion_process.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+Q10 How far in advance can I book and how many appointments can I hold?
+     retrieved docs: ['01_appointment_booking_policy.md', '10_follow_up_visit_discount_policy.md']
+     relevant docs : ['01_appointment_booking_policy.md']
+     P = 1/2 = 0.500   R = 1/1 = 1.000
+MEAN  precision = 0.583   recall = 1.000
+
+==============================================================================
+3. Calibrate the 'I don't know' threshold from measured top-1 cosine
+==============================================================================
+
+--- collection: practo_kb_fixed ---
+  IN   top1=0.7031  How much does a dermatology consultation cost?
+  IN   top1=0.5728  Can I reschedule my appointment and how many times?
+  IN   top1=0.5822  When will my blood test report be ready?
+  IN   top1=0.6777  Is video consultation available for pediatrics?
+  IN   top1=0.6887  Does Practo share my medical records with my employer?
+  OUT  top1=0.0661  What is the weather in Mumbai today?
+  OUT  top1=0.0459  Who won the IPL final this year?
+  OUT  top1=0.0795  Recommend a good laptop for programming.
+  OUT  top1=0.2213  Which medicine should I take for a migraine?
+  min(in-scope)=0.5728  max(out-of-scope)=0.2213  -> threshold = (0.5728 + 0.2213) / 2 = 0.397
+
+--- collection: practo_kb_sentence ---
+  IN   top1=0.7031  How much does a dermatology consultation cost?
+  IN   top1=0.6633  Can I reschedule my appointment and how many times?
+  IN   top1=0.6010  When will my blood test report be ready?
+  IN   top1=0.6847  Is video consultation available for pediatrics?
+  IN   top1=0.6887  Does Practo share my medical records with my employer?
+  OUT  top1=0.0581  What is the weather in Mumbai today?
+  OUT  top1=0.0236  Who won the IPL final this year?
+  OUT  top1=0.0911  Recommend a good laptop for programming.
+  OUT  top1=0.2170  Which medicine should I take for a migraine?
+  min(in-scope)=0.6010  max(out-of-scope)=0.2170  -> threshold = (0.6010 + 0.2170) / 2 = 0.409
+
+Chosen collection: practo_kb_fixed, threshold 0.397 -> saved to results\calibration.json
+
+==============================================================================
+4. Grounded generation demo (MOCK_LLM, collection practo_kb_fixed)
+==============================================================================
+
+Q: What is the cancellation refund if I cancel 2 hours before my slot?
+   top1=0.7739  refused=False (None)
+A: Cancellations made less than 4 hours before the slot receive a 50% refund. the change is made at least 2 hours before the original slot.
+   sources: ['02_cancellation_rescheduling_window.md']
+
+Q: How much does an orthopedics consultation cost?
+   top1=0.6756  refused=False (None)
+A: Orthopedics consultations range from INR 600 to INR 1200, and Cardiology consultations range from INR 800 to INR 1500. General Medicine consultations cost between INR 300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology between INR 500 and INR 1000.
+   sources: ['03_consultation_fee_structure.md']
+
+Q: Can I get a prescription refill for a controlled drug?
+   top1=0.736  refused=False (None)
+A: Refills are never issued for controlled or scheduled drugs, which always require a fresh consultation. Approved refills appear as a digital prescription that the patient can use
+   sources: ['05_prescription_refill_policy.md']
+
+Q: How long do culture test reports take?
+   top1=0.573  refused=False (None)
+A: Culture tests and biopsy reports can take 3 to 7 working tests and biopsy reports can take 3 to 7 working days.
+   sources: ['06_lab_test_turnaround_times.md']
+
+Q: Is there an extra charge for a home visit?
+   top1=0.5834  refused=False (None)
+A: A home-visit surcharge of INR 500 is added on top of the regular consultation fee. Home visits are not available for emergencies or for procedures
+   sources: ['12_home_visit_eligibility.md']
+
+Q: Can you suggest a good pizza place in Bangalore?
+   top1=0.1517  refused=True (out_of_scope)
+A: I don't know based on the Practo knowledge base. I can help with appointments, fees, cancellations, refills, lab reports, telemedicine, insurance, privacy, follow-ups, second opinions and home visits.
+   sources: []
+
+README.md CALIBRATION and RETRIEVAL blocks updated with the numbers above.

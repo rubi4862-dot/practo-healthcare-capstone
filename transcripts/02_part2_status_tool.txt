@@ -1,0 +1,67 @@
+$ MOCK_LLM=1 part2_status_tool.py
+
+escalation_score = 0.6 * follow_up_required + 0.4 * (1 - days_since_created / 30)
+
+record    follow_up  days  score
+APT-1024  True       4     0.947
+APT-1037  True       6     0.920
+APT-1005  True       12    0.840
+APT-1040  True       17    0.773
+APT-1014  True       21    0.720
+APT-1039  True       22    0.707
+APT-1009  True       24    0.680
+APT-1025  True       26    0.653
+APT-1022  False      1     0.387
+APT-1020  False      3     0.360
+APT-1030  False      3     0.360
+APT-1036  False      3     0.360
+APT-1026  False      4     0.347
+APT-1033  False      5     0.333
+APT-1035  False      6     0.320
+APT-1008  False      8     0.293
+APT-1021  False      8     0.293
+APT-1029  False      11    0.253
+APT-1002  False      12    0.240
+APT-1006  False      13    0.227
+APT-1015  False      13    0.227
+APT-1023  False      15    0.200
+APT-1031  False      15    0.200
+APT-1010  False      16    0.187
+APT-1034  False      17    0.173
+APT-1001  False      19    0.147
+APT-1007  False      19    0.147
+APT-1017  False      21    0.120
+APT-1032  False      22    0.107
+APT-1038  False      23    0.093
+APT-1027  False      24    0.080
+APT-1018  False      26    0.053
+APT-1011  False      27    0.040
+APT-1016  False      28    0.027
+APT-1028  False      28    0.027
+APT-1003  False      29    0.013
+APT-1004  False      29    0.013
+APT-1012  False      29    0.013
+APT-1013  False      29    0.013
+APT-1019  False      30    0.000
+
+Percentiles of the score over all 40 records:
+  P50  = 0.2270
+  P75  = 0.3600
+  P80  = 0.4402
+  P85  = 0.6841
+  P90  = 0.7253
+  P95  = 0.8440
+
+Threshold = P90 = 0.725 -> 4/40 records (10%) escalate.
+Why P90: the top ~10% is what a small support team can contact proactively, and here it
+selects exactly the follow-up-required records created <=16 days ago, i.e. still close
+to the 7-day free / 14-day half-price follow-up window in kb/10.
+
+check_appointment_status('APT-1024') ->
+  {'found': True, 'record_id': 'APT-1024', 'category': 'Cardiology', 'status': 'Completed', 'consultation_fee_inr': 1350, 'follow_up_required': True, 'days_since_created': 4, 'escalation_score': 0.947, 'escalation_threshold': 0.725, 'escalate': True}
+check_appointment_status('APT-1025') ->
+  {'found': True, 'record_id': 'APT-1025', 'category': 'Orthopedics', 'status': 'Completed', 'consultation_fee_inr': 950, 'follow_up_required': True, 'days_since_created': 26, 'escalation_score': 0.653, 'escalation_threshold': 0.725, 'escalate': False}
+check_appointment_status('APT-1022') ->
+  {'found': True, 'record_id': 'APT-1022', 'category': 'Pediatrics', 'status': 'No-Show', 'consultation_fee_inr': 650, 'follow_up_required': False, 'days_since_created': 1, 'escalation_score': 0.387, 'escalation_threshold': 0.725, 'escalate': False}
+check_appointment_status('APT-9999') ->
+  {'found': False, 'record_id': 'APT-9999', 'error': 'No appointment with ID APT-9999.'}

@@ -1,0 +1,26 @@
+$ MOCK_LLM=1 part2_memory.py
+
+Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 2576.81it/s]
+sys:1: LangChainDeprecationWarning: RunnableWithMessageHistory is deprecated. Use LangGraph's built-in persistence instead.
+=== Session A: multi-turn, memory carries the appointment ID ===
+
+C:\Users\ACER\Desktop\Agentic Systems\capstone\part2_memory.py:32: LangChainDeprecationWarning: The class `InMemoryChatMessageHistory` was deprecated in LangChain 1.6.4 and will be removed in 2.0.0 See the short-term memory documentation for recommended alternatives: https://docs.langchain.com/oss/python/langchain/short-term-memory
+  return SESSIONS.setdefault(session_id, InMemoryChatMessageHistory())
+[session-A] USER: What is the status of APT-1024?
+[session-A] BOT : Appointment APT-1024 (Cardiology) is Completed with a consultation fee of INR 1350. The doctor marked a follow-up as required. Escalation score 0.947 is at or above the threshold 0.725, so it is escalated to the support team.
+
+[session-A] USER: What fee did I pay for it?
+[session-A] BOT : Appointment APT-1024 (Cardiology) is Completed with a consultation fee of INR 1350. The doctor marked a follow-up as required. Escalation score 0.947 is at or above the threshold 0.725, so it is escalated to the support team. Consultation fees are set per specialty and are shown before the patient confirms a booking. Fees include GST and do not cover lab tests, procedures, or
+
+[session-A] USER: Is a follow-up visit within 7 days free for that appointment?
+[session-A] BOT : Appointment APT-1024 (Cardiology) is Completed with a consultation fee of INR 1350. The doctor marked a follow-up as required. Escalation score 0.947 is at or above the threshold 0.725, so it is escalated to the support team. A follow-up visit with the same doctor within 7 days of the original consultation is free of charge. A follow-up booked between 8 and 14 days after the original visit gets a 50% discount on the consultation fee.
+
+session-A history now holds 6 messages.
+
+=== Session B: fresh session, no memory of APT-1024 ===
+
+[session-B] USER: What fee did I pay for it?
+[session-B] BOT : Which appointment do you mean? Please share the ID (format APT-XXXX).
+
+session-B history holds 2 messages.

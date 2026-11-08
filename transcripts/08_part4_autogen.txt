@@ -1,0 +1,33 @@
+$ MOCK_LLM=1 part4_autogen.py
+
+Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 2234.38it/s]
+==============================================================================
+CASE 1: grounded draft -> expect approve unchanged
+==============================================================================
+[user] (TextMessage) DRAFT: Orthopedics consultations range from INR 600 to INR 1200, and Cardiology consultations range from INR 800 to INR 1500. General Medicine consultations cost between INR 300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology between INR 500 and INR 1000.
+
+[Policy_Compliance_Reviewer] (TextMessage) REVIEW: COMPLIANT. Every sentence in the draft is supported by the retrieved policy context.
+
+[Final_Editor] (StructuredMessage[Verdict]) {"approved":true,"final_answer":"Orthopedics consultations range from INR 600 to INR 1200, and Cardiology consultations range from INR 800 to INR 1500. General Medicine consultations cost between INR 300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology between INR 500 and INR 1000.","reason":"Reviewer found every claim grounded in the policy context."}
+
+stop_reason: Maximum number of turns 2 reached.
+VERDICT -> approved=True
+  final_answer: Orthopedics consultations range from INR 600 to INR 1200, and Cardiology consultations range from INR 800 to INR 1500. General Medicine consultations cost between INR 300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology between INR 500 and INR 1000.
+  reason: Reviewer found every claim grounded in the policy context.
+
+==============================================================================
+CASE 2: injected ungrounded claim -> expect revise
+==============================================================================
+[user] (TextMessage) DRAFT: Orthopedics consultations range from INR 600 to INR 1200, and Cardiology consultations range from INR 800 to INR 1500. General Medicine consultations cost between INR 300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology between INR 500 and INR 1000. Cardiology consultations are always free for senior citizens.
+
+[Policy_Compliance_Reviewer] (TextMessage) REVIEW: NON-COMPLIANT. Unsupported claims: Cardiology consultations are always free for senior citizens.
+
+[Final_Editor] (StructuredMessage[Verdict]) {"approved":false,"final_answer":"Orthopedics consultations range from INR 600 to INR 1200, and Cardiology consultations range from INR 800 to INR 1500. General Medicine consultations cost between INR 300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology between INR 500 and INR 1000.","reason":"Removed 1 claim(s) not supported by the knowledge base: Cardiology consultations are always free for senior citizens."}
+
+stop_reason: Maximum number of turns 2 reached.
+VERDICT -> approved=False
+  final_answer: Orthopedics consultations range from INR 600 to INR 1200, and Cardiology consultations range from INR 800 to INR 1500. General Medicine consultations cost between INR 300 and INR 600, Pediatrics between INR 400 and INR 800, and Dermatology between INR 500 and INR 1000.
+  reason: Removed 1 claim(s) not supported by the knowledge base: Cardiology consultations are always free for senior citizens.
+
+Both cases behaved as expected.

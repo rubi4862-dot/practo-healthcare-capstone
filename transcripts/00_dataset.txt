@@ -1,0 +1,22 @@
+$ MOCK_LLM=1 dataset.py
+
+Generated 40 appointments (SEED=30)
+
+Count per category:
+  General Medicine   11
+  Cardiology         7
+  Dermatology        8
+  Pediatrics         8
+  Orthopedics        6
+
+Count per status:
+  Scheduled          13
+  Completed          14
+  Cancelled          5
+  No-Show            4
+  Rescheduled        4
+
+follow_up_required=True: 20.0%  (target 10-30%)
+consultation_fee_inr range: 300-1450 INR
+
+All validation checks passed.

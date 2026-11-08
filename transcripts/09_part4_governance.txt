@@ -1,0 +1,38 @@
+$ MOCK_LLM=1 part4_governance.py
+
+
+==============================================================================
+1. LEAST AUTONOMY - tool allowlist (the crew in part2_crew.py is built from this)
+==============================================================================
+  Retrieval Agent              ['rag_search']
+  Lookup Agent                 ['check_appointment_status']
+  Composer Agent               (no tools)
+  Policy_Compliance_Reviewer   (no tools)
+  Final_Editor                 (no tools)
+  ALLOWED : Lookup Agent -> check_appointment_status
+  DENIED  : 'Retrieval Agent' is not allowed to call 'check_appointment_status'
+  DENIED  : 'Composer Agent' is not allowed to call 'rag_search'
+  DENIED  : 'Final_Editor' is not allowed to call 'check_appointment_status'
+
+==============================================================================
+2. PER-REQUEST BUDGET CAP
+==============================================================================
+caps: question <= 500 tokens, estimated cost <= $0.005
+  normal    OK      {'question_tokens': 9, 'input_tokens': 369, 'output_tokens': 200, 'est_cost_usd': 0.004107}
+  oversized REJECTED  question is ~520 tokens; the cap is 500
+
+==============================================================================
+3. IN-MEMORY RESPONSE CACHE (key = normalised query)
+==============================================================================
+Could not reach the Hub (Cannot reach https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2: offline mode is enabled. To disable it, please unset the `HF_HUB_OFFLINE` environment variable.). Using cached commit hash for 'sentence-transformers/all-MiniLM-L6-v2'.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 2694.27it/s]
+  key='how much does a cardiology consultation cost'
+    llm_calls 0 -> 1   answer: Orthopedics consultations range from INR 600 to INR 1200, and Cardiolo...
+  key='how much does a cardiology consultation cost'
+    llm_calls 1 -> 1   answer: Orthopedics consultations range from INR 600 to INR 1200, and Cardiolo...
+  key='how much does a cardiology consultation cost'
+    llm_calls 1 -> 1   answer: Orthopedics consultations range from INR 600 to INR 1200, and Cardiolo...
+  key='how long do thyroid reports take'
+    llm_calls 1 -> 2   answer: Thyroid, vitamin, and hormone panels usually take 48 hours. Culture te...
+
+Cache hits=2 misses=2; MOCK_LLM generations=2 for 4 requests.

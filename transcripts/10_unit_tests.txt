@@ -1,0 +1,4 @@
+$ MOCK_LLM=1 -m pytest -q tests/
+
+.........                                                                [100%]
+9 passed in 0.18s
